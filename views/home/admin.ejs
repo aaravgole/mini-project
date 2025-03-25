@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading text-white">Admin Panel</div>
+            <div class="list-group list-group-flush">
+                <a href="#dashboard" class="list-group-item list-group-item-action text-white bg-dark">Dashboard</a>
+                <a href="#reservations" class="list-group-item list-group-item-action text-white bg-dark">Reservations</a>
+                <a href="#edit-menu" class="list-group-item list-group-item-action text-white bg-dark">Edit Menu</a>
+            </div>
+        </div>
+        
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="container-fluid p-4">
+            <h2 id="dashboard">Dashboard</h2>
+            <p>Welcome, Admin! Here you can manage reservations and edit the menu.</p>
+            
+            <h3 id="reservations">Seat Reservations</h3>
+            <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr.no</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone no</th>
+                        <th>No. of guests</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th class="w-25">Message</th>>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let count = 1; %>
+                    <% for(let listings of allReservations)  { %>
+                        <tr>
+                            <td><%= count %></td>
+                            <td><%= listings.name %></td>
+                            <td><%= listings.email %></td>
+                            <td><%= listings.phone %></td>
+                            <td><%= listings.people %></td>
+                            <td><%= listings.date %></td>
+                            <td><%= listings.time %></td>
+                            <td><%= listings.message %></td>
+                        </tr>
+                        <% count++; %>
+                    <% }; %>
+                </tbody>
+            </table>
+            </div>
+            
+            <h3 id="edit-menu">Edit Menu</h3>
+            <table class="table table-dark table-striped" id="menu-table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% allMenuItems.forEach((item, index) => { %>
+                        <tr>
+                            <td><%= item.name %></td>
+                            <td>
+                                <% if (item.image) { %>
+                                    <img src="/uploads/<%= item.image %>" alt="Item Image" style="width: 60px; height: 60px; border-radius: 5px;">
+                                <% } else { %>
+                                    No Image
+                                <% } %>
+                            </td>
+                            <td>$<%= item.price %></td>
+                            <td><%= item.type %></td>
+                            <td>
+                                    
+                                <a href="/admin/menu/<%= item._id %>/edit" class="btn btn-warning btn-sm">Edit</a>
+                                
+                                   
+                                <form action="/admin/menu/<%= item._id %>?_method=DELETE" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+                
+            </table>
+            
+            <h4>Add New Item</h4>
+<form id="add-item-form" method="POST" action="/admin" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="new-item-name" class="form-label">Item Name</label>
+        <input type="text" class="form-control" id="new-item-name" name="name" placeholder="Enter item name" required>
+    </div>
+    <div class="mb-3">
+        <label for="new-item-image" class="form-label">Upload Image</label>
+        <input type="file" class="form-control" id="new-item-image" name="image" accept="image/*" required>
+    </div>
+    <div class="mb-3">
+        <label for="new-item-price" class="form-label">Price</label>
+        <input type="number" class="form-control" id="new-item-price" name="price" placeholder="Enter price" required>
+    </div>
+    <div class="mb-3">
+        <label for="new-item-type" class="form-label">Type</label>
+            <select class="form-control" id="new-item-type" name="type" required>
+                <option value="">Select Type</option>
+                <option value="Special">Special</option>
+                <option value="Starter">Starter</option>
+                <option value="Salad">Salad</option>
+            </select>
+    </div>
+    <button type="submit" class="btn btn-success">Add Item</button>
+</form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

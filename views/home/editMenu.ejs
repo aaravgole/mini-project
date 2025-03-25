@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit List</title>
+</head>
+<body>
+    <form action="/admin/menu/<%= menuItem._id %>?_method=PUT" method="POST" enctype="multipart/form-data" style="width: 300px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+    
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Item Name</label>
+        <input type="text" name="name" value="<%= menuItem.name %>" required style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Price</label>
+        <input type="number" name="price" value="<%= menuItem.price %>" required style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Type</label>
+        <select name="type" required style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="Special" <%= menuItem.type === "Special" ? "selected" : "" %>>Special</option>
+            <option value="Starter" <%= menuItem.type === "Starter" ? "selected" : "" %>>Starter</option>
+            <option value="Salad" <%= menuItem.type === "Salad" ? "selected" : "" %>>Salad</option>
+        </select>
+    
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Upload New Image</label>
+        <input type="file" name="image" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Update</button>
+    </form>    
+</body>
+</html>
