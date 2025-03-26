@@ -216,7 +216,7 @@
         <div class="row menu-container" data-aos="fade-up" data-aos-delay="200" id="menu-container">
           <% allMenuItems.forEach(item => { %>
             <div class="col-lg-6 menu-item filter-<%= item.type.toLowerCase() %>">
-              <img src="<%= item.image %>" class="menu-img" alt="<%= item.name %>">
+              <img src="/uploads/<%= item.image %>" class="menu-img" alt="<%= item.name %>">
               <div class="menu-content">
                 <a href="#"><%= item.name %></a><span>$<%= item.price %></span>
               </div>

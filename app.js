@@ -46,6 +46,7 @@ const upload = multer({ storage });
 app.get("/home", async (req, res, next) => {
     try {
         const allMenuItems = await Menu.find({}); 
+        console.log("All Menu Items:", allMenuItems);
         res.render("home/front", { allMenuItems }); // Pass menu items to the frontend
     } catch (error) {
         console.error("Error fetching menu items:", error);
@@ -85,6 +86,7 @@ app.post("/home", async (req, res, next) => {
         res.render("home/front");
         
         const allMenuItems = await Menu.find();
+        console.log("All Menu Items:", allMenuItems);
         res.render("home/front");
     } catch (error) {
         next(error);
@@ -95,6 +97,7 @@ app.post("/home", async (req, res, next) => {
 app.get("/", async (req, res) => {
     try {
       const allMenuItems = await MenuItem.find(); // Fetch menu items from DB
+      console.log("All Menu Items:", allMenuItems);
       res.render("home/front", { allMenuItems }); // Ensure correct variable name is passed
     } catch (err) {
       console.log(err);
@@ -110,6 +113,7 @@ app.get("/admin", async (req, res) => {
     try {
         const allReservations = await Reservation.find({});
         const allMenuItems = await Menu.find({});
+        console.log("All Reservations:", allMenuItems);  
         res.render("home/admin.ejs", { allReservations, allMenuItems });
     } catch (err) {
         console.error(err);
@@ -162,6 +166,7 @@ app.get("/admin/menu/:id/edit", async (req, res) => {
     try {
         const { id } = req.params;
         const menuItem = await Menu.findById(id);
+        console.log("menuItem:::>>", menuItem);
         if (!menuItem) {
             return res.status(404).send("Menu item not found");
         }
