@@ -6,6 +6,8 @@ const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
 const multer = require("multer"); // Multer for image uploads
 
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+
 // Database Connection
 main().then(() => console.log("Connection with Database Successful"))
     .catch(err => console.log(err));
@@ -15,7 +17,7 @@ async function main() {
 }
 
 // Server Setup
-const port = 8080;
+const port = 3000;
 app.listen(port, () => {
     console.log(`Listening to Server on port ${port}`);
 });
@@ -24,10 +26,10 @@ app.listen(port, () => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
 app.use(express.json());
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(methodOverride('_method'));
 
 // Multer Configuration for Image Uploads
 const storage = multer.diskStorage({
@@ -41,12 +43,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-app.get("/", (req, res) => {
-    res.send("Hi, I am root");
-});
-
-app.get("/home", (req, res) => {
-    res.render("home/front.ejs");
+app.get("/home", async (req, res, next) => {
+    try {
+        const allMenuItems = await Menu.find({}); 
+        res.render("home/front", { allMenuItems }); // Pass menu items to the frontend
+    } catch (error) {
+        console.error("Error fetching menu items:", error);
+        next(error);
+    }
 });
 
 // Reservation Schema
@@ -73,33 +77,31 @@ const menuSchema = new mongoose.Schema({
 
 const Menu = mongoose.model("Menu", menuSchema);
 
-app.get("/home", async (req, res, next) => {
-    try {
-        const menuItems = await Menu.find();
-        console.log("Menu Items Sent to EJS:", menuItems); // Debugging line
-        res.render("home/front", { menuItems }); // Pass menuItems to EJS
-    } catch (error) {
-        console.error("Error fetching menu items:", error);
-        next(error);
-    }
-});
-
-
-
-// Handle Reservation Form Submission
 app.post("/home", async (req, res, next) => {
     try {
         const newReservation = new Reservation(req.body);
         await newReservation.save();
         console.log("New Reservation:", newReservation);
+        res.render("home/front");
         
-        // Instead of redirecting, re-fetch menu items and re-render home page
-        const menuItems = await Menu.find();
-        res.render("home/front", { menuItems });
+        const allMenuItems = await Menu.find();
+        res.render("home/front");
     } catch (error) {
         next(error);
     }
 });
+
+
+app.get("/", async (req, res) => {
+    try {
+      const allMenuItems = await MenuItem.find(); // Fetch menu items from DB
+      res.render("home/front", { allMenuItems }); // Ensure correct variable name is passed
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error fetching menu items");
+    }
+  });
+  
 
 
 
@@ -130,6 +132,19 @@ app.post("/admin", upload.single("image"), async (req, res) => {
         res.status(500).send("Error adding menu item");
     }
 });
+
+app.delete("/admin/reservation/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Reservation.findByIdAndDelete(id);
+        console.log(`Reservation with ID ${id} deleted.`);
+        res.redirect("/admin");
+    } catch (error) {
+        console.error("Error deleting reservation:", error);
+        res.status(500).send("Error deleting reservation");
+    }
+});
+
 
 app.delete("/admin/menu/:id", async (req, res) => {
     try {
